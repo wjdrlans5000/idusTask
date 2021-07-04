@@ -39,10 +39,6 @@ public class Member {
         return id;
     }
 
-    public void setOrders(List<OrderInfo> orders) {
-        this.orders = orders;
-    }
-
     public void updateOrders(final OrderInfo entity) {
         this.orders.add(entity);
     }

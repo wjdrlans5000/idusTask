@@ -1,6 +1,8 @@
 package com.example.idustask.order;
 
 import com.example.idustask.member.Member;
+import com.example.idustask.member.MemberRepository;
+import com.example.idustask.member.errors.MemberNotFoundException;
 import com.example.idustask.order.dto.OrderInfoRequestDto;
 import com.example.idustask.order.dto.OrderInfoResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +18,20 @@ import java.util.List;
 public class OrderInfoService {
     private final OrderInfoRepository orderInfoRepository;
 
+    private final MemberRepository memberRepository;
+
+
+    @Transactional
     public OrderInfo createOrderInfo(OrderInfoRequestDto orderInfoRequestDto, Member member){
+
         final OrderInfo orderInfo = orderInfoRequestDto.toEntity(member);
         OrderInfo result = orderInfoRepository.save(orderInfo);
+        // 회원에 order 정보 추가
+        Member findMember = memberRepository.findById(member.getId())
+                .orElseThrow(MemberNotFoundException::new);
 
-        List<OrderInfo> orders = new ArrayList<>();
+        findMember.updateOrders(result);
 
-        orders.add(result);
-        member.setOrders(orders);
-        result.setMember(member);
         return result;
     }
 }

@@ -25,10 +25,6 @@ public class OrderInfo extends BaseEntity {
     @Column(nullable = false)
     private String buyDate;
 
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
     public OrderInfo(Member member, String productName, String buyDate) {
         this.member = member;
         this.productName = productName;
