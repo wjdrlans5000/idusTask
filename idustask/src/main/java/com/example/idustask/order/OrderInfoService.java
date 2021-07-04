@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -16,7 +19,12 @@ public class OrderInfoService {
     public OrderInfo createOrderInfo(OrderInfoRequestDto orderInfoRequestDto, Member member){
         final OrderInfo orderInfo = orderInfoRequestDto.toEntity(member);
         OrderInfo result = orderInfoRepository.save(orderInfo);
-        member.updateOrders(result);
+
+        List<OrderInfo> orders = new ArrayList<>();
+
+        orders.add(result);
+        member.setOrders(orders);
+        result.setMember(member);
         return result;
     }
 }

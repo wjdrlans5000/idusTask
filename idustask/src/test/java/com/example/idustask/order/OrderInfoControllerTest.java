@@ -5,9 +5,11 @@ import com.example.idustask.common.BaseControllerTest;
 import com.example.idustask.common.TestDescription;
 import com.example.idustask.config.WithMockCustomUser;
 import com.example.idustask.member.Member;
+import com.example.idustask.member.MemberRepository;
 import com.example.idustask.member.dto.MemberRequestDto;
 import com.example.idustask.order.dto.OrderInfoRequestDto;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 
 import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,6 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 public class OrderInfoControllerTest extends BaseControllerTest {
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     @WithMockCustomUser(username = "tester@mail.com", roles = "USER")
@@ -33,6 +39,7 @@ public class OrderInfoControllerTest extends BaseControllerTest {
         OrderInfo orderInfo = new OrderInfo(getLoginMember(), "떡", date.toString());
 
         OrderInfoRequestDto orderInfoRequestDto = OrderInfoRequestDto.from(orderInfo);
+        Member member = memberRepository.save(getLoginMember());
 
         mockMvc.perform(post("/api/order")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -44,6 +51,15 @@ public class OrderInfoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("productName").exists())
                 .andExpect(jsonPath("buyDate").exists())
                 ;
+
+        //회원 주문 목록 조회
+        mockMvc.perform(get("/api/member/{id}",21)
+                .accept(MediaTypes.HAL_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+        ;
     }
 
     private Member getLoginMember(){

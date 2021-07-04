@@ -15,14 +15,19 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderInfo extends BaseEntity {
 
-    //하나의 주문정보는 하나의 멤버와 연관관계
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mem_id")
     private Member member;
 
+    @Column(nullable = false)
     private String productName;
 
+    @Column(nullable = false)
     private String buyDate;
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 
     public OrderInfo(Member member, String productName, String buyDate) {
         this.member = member;
