@@ -4,6 +4,8 @@ import com.example.idustask.member.dto.MemberRequestDto;
 import com.example.idustask.member.dto.MemberResponseDto;
 import com.example.idustask.member.errors.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +18,7 @@ public class MemberService {
     private final PasswordEncoder encode;
 
     @Transactional
-    public Member saveMember(MemberRequestDto memberDto){
+    public Member saveMember(final MemberRequestDto memberDto){
         Member member =  memberRepository.save(Member.createMember(memberDto.getEmail(),
                                                                     encode.encode(memberDto.getPassword()),
                                                                     memberDto.getName(),
@@ -36,4 +38,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException(id + "is not found"));
     }
 
+    public Page<Member> getMembers(final Pageable pageable) {
+        return memberRepository.findAllByMembers(pageable);
+    }
 }

@@ -88,7 +88,7 @@ public class MemberControllerTest extends BaseControllerTest {
     @Test
     @WithMockCustomUser(username = "tester@mail.com", roles = "USER")
     @TestDescription("로그인한 회원 상세정보 조회")
-    public void getDocument() throws Exception {
+    public void getMember() throws Exception {
 
         //When & Then
         mockMvc.perform(get("/api/member/{id}",1)
@@ -99,6 +99,25 @@ public class MemberControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("id").exists())
         ;
     }
+
+    @Test
+    @WithMockCustomUser(username = "tester@mail.com", roles = "USER")
+    @TestDescription(" 회원 목록 조회")
+    public void getMembers() throws Exception {
+
+        //When & Then
+        mockMvc.perform(get("/api/member")
+                .param("page","0") //패이지는 0부터 시작
+                .param("size","10")
+                .param("sort","id,DESC")
+                .accept(MediaTypes.HAL_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+//                .andExpect(jsonPath("id").exists())
+        ;
+    }
+
 
 
 }

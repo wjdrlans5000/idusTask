@@ -1,9 +1,14 @@
 package com.example.idustask.member;
 
+import com.example.idustask.auth.support.AuthUser;
 import com.example.idustask.member.dto.MemberRequestDto;
 import com.example.idustask.member.dto.MemberResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -44,7 +49,7 @@ public class MemberController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getDocument(@PathVariable Integer id) {
+    public ResponseEntity getMember(@PathVariable Integer id) {
 
         MemberResponseDto memberResponseDto = service.getMember(id);
         MemberResource memberResource = new MemberResource(memberResponseDto);
@@ -53,5 +58,23 @@ public class MemberController {
         return ResponseEntity.ok(memberResource);
     }
 
+    @GetMapping
+    public ResponseEntity getMembers(Pageable pageable,
+                                       PagedResourcesAssembler<MemberResponseDto> assembler,
+                                       @AuthUser final Member member
+    ) {
+
+        Page<Member> page = service.getMembers(pageable);
+        //page 제네릭타입 DocumentResponse으로 변환
+        Page<MemberResponseDto> page2 = page.map(member2 -> MemberResponseDto.from(member2));
+        //Page 를 페이징처리가 된 Model 목록으로 변환해준다.
+        //e-> new EventResource(e) > 각 Event를 EventResource 로 변환 작업
+        PagedModel pagedResources = assembler.toModel(page2, e -> new MemberResource(e));
+        //create 링크정보 추가
+        pagedResources.add(linkTo(MemberController.class).withRel("get-member"));
+        //Profile 에 대한 링크 정보만 추가
+//        pagedResources.add(new Link("/docs/index.html#resources-document-list").withRel("profile"));
+        return ResponseEntity.ok(pagedResources);
+    }
 
 }

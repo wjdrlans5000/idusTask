@@ -2,6 +2,9 @@ package com.example.idustask.auth.config;
 
 import com.example.idustask.member.Member;
 import com.example.idustask.member.MemberRepository;
+import com.example.idustask.order.OrderInfo;
+import com.example.idustask.order.OrderInfoRepository;
+import com.example.idustask.order.dto.OrderInfoRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -11,6 +14,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Set;
 
 @Configuration
@@ -30,6 +34,9 @@ public class AppConfig {
             MemberRepository memberRepository;
 
             @Autowired
+            OrderInfoRepository orderInfoRepository;
+
+            @Autowired
             PasswordEncoder encode;
 
             @Override
@@ -46,7 +53,17 @@ public class AppConfig {
                             .phoneNumber("010111111"+i)
                             .gender(Member.Gender.MALE)
                             .build();
-                    memberRepository.save(member);
+                    Member savedMember = memberRepository.save(member);
+
+                    //주문생성 회원당 3개씩
+                    for (int j = 0; j < 3; j++) {
+                        OrderInfoRequestDto orderInfoRequestDto = new OrderInfoRequestDto(member.getId(),"productName"+i +"-"+j, new Date(System.currentTimeMillis()).toString());
+                        final OrderInfo orderInfo = orderInfoRequestDto.toEntity(member);
+                        OrderInfo result = orderInfoRepository.save(orderInfo);
+
+                        savedMember.updateOrders(result);
+                    }
+
                 }
             }
         };
