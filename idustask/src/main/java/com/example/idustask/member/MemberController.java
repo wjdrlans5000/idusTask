@@ -48,10 +48,10 @@ public class MemberController {
 //        return "success, id : " + member.getId();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity getMember(@PathVariable Integer id) {
+    @GetMapping("/myinfo")
+    public ResponseEntity getMember(@AuthUser final Member member) {
 
-        MemberResponseDto memberResponseDto = service.getMember(id);
+        MemberResponseDto memberResponseDto = service.getMember(member.getId());
         MemberResource memberResource = new MemberResource(memberResponseDto);
 //        memberResource.add(linkTo(methodOn(ApprovalController.class).approval(id,null,null,null,null)).withRel("approval"));
 //        memberResource.add(new Link("/docs/index.html#resources-document-get").withRel("profile"));
@@ -60,11 +60,13 @@ public class MemberController {
 
     @GetMapping
     public ResponseEntity getMembers(Pageable pageable,
-                                       PagedResourcesAssembler<MemberResponseDto> assembler,
-                                       @AuthUser final Member member
+                                     PagedResourcesAssembler<MemberResponseDto> assembler,
+                                     @RequestParam(required = false) String name,
+                                     @RequestParam(required = false) String email,
+                                     @AuthUser final Member member
     ) {
 
-        Page<Member> page = service.getMembers(pageable);
+        Page<Member> page = service.getMembers(pageable,name,email);
         //page 제네릭타입 DocumentResponse으로 변환
         Page<MemberResponseDto> page2 = page.map(member2 -> MemberResponseDto.from(member2));
         //Page 를 페이징처리가 된 Model 목록으로 변환해준다.

@@ -7,6 +7,7 @@ import com.example.idustask.common.TestDescription;
 import com.example.idustask.config.WithMockCustomUser;
 import com.example.idustask.member.dto.MemberRequestDto;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 public class MemberControllerTest extends BaseControllerTest {
+
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     @TestDescription("회원가입 테스트")
@@ -90,8 +95,10 @@ public class MemberControllerTest extends BaseControllerTest {
     @TestDescription("로그인한 회원 상세정보 조회")
     public void getMember() throws Exception {
 
+        Member member = memberRepository.save(getLoginMember());
+
         //When & Then
-        mockMvc.perform(get("/api/member/{id}",1)
+        mockMvc.perform(get("/api/member/myinfo")
                 .accept(MediaTypes.HAL_JSON)
         )
                 .andDo(print())
@@ -110,6 +117,9 @@ public class MemberControllerTest extends BaseControllerTest {
                 .param("page","0") //패이지는 0부터 시작
                 .param("size","10")
                 .param("sort","id,DESC")
+                //이름, 이메일로 검색
+                .param("name","네임")
+                .param("email","testUser0@mail.com")
                 .accept(MediaTypes.HAL_JSON)
         )
                 .andDo(print())
@@ -119,5 +129,12 @@ public class MemberControllerTest extends BaseControllerTest {
     }
 
 
-
+    private Member getLoginMember(){
+        // 로그인한 사용자의 id를 userId로 설정
+        // email은 writerEmail로 설정
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserMember userMember = (UserMember) principal;
+        Member userDetails = userMember.getMember();
+        return userDetails;
+    }
 }

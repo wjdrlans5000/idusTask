@@ -7,5 +7,5 @@ import java.util.List;
 
 //Repository명 + Custom >> 명명규칙 해당이름으로 정의하면 jpa에서 매핑해줌
 public interface MemberRepositoryCustom {
-    Page<Member> findAllByMembers(Pageable pageable);
+    Page<Member> findAllByMembers(Pageable pageable, String name, String email);
 }

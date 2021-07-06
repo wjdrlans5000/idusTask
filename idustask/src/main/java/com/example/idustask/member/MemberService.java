@@ -38,7 +38,7 @@ public class MemberService {
                 .orElseThrow(() -> new MemberNotFoundException(id + "is not found"));
     }
 
-    public Page<Member> getMembers(final Pageable pageable) {
-        return memberRepository.findAllByMembers(pageable);
+    public Page<Member> getMembers(final Pageable pageable, String name, String email) {
+        return memberRepository.findAllByMembers(pageable, name, email);
     }
 }
