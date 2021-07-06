@@ -38,7 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             Collections.unmodifiableList(
                     Arrays.asList(
                             "/api/member/signup",
-                            "/api/authenticate",
+                            "/api/signin",
                             "/docs/index.html",
                             "/h2-console/**"
                     ));
@@ -71,7 +71,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if(jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 //InMemoryTokenStore에 저장된 토큰과 비교
-                if(!InMemoryTokenStore.getTokenStore().get(jwtToken).equals(jwtToken)){
+                 String store = InMemoryTokenStore.getTokenStore().get(jwtToken);
+                if(!store.equals(jwtToken)){
                     throw new BadCredentialsException("UnAuthorized");
                 }
 

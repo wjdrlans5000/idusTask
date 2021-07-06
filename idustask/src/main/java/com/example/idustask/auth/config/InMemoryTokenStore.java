@@ -14,7 +14,8 @@ public class InMemoryTokenStore {
         this.tokenStore.put(token,token);
     }
 
-    public void removeAccessToken(String token) {
+    public static void removeAccessToken(String jwtToken) {
+        tokenStore.replace(jwtToken,"");
     }
 
     public static ConcurrentHashMap<String, String> getTokenStore() {

@@ -6,6 +6,7 @@ import com.example.idustask.auth.service.JwtUserDetailsService;
 import com.example.idustask.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailService;
 
     //[2].로그인할 이메일과 패스워드를 사용하여 인증요청을 함
-    @PostMapping("/api/authenticate")
+    @PostMapping("/api/signin")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         final Member member = userDetailService.authenticateByEmailAndPassword
                 (authenticationRequest.getEmail(), authenticationRequest.getPassword());
@@ -38,13 +40,22 @@ public class JwtAuthenticationController {
         claims.put("userId",member.getId());
         claims.put("userEmail",member.getEmail());
         claims.put("userName", member.getName());
-        final String token = jwtTokenUtil.generateToken(member.getEmail(),claims);
+        final String token = jwtTokenUtil.generateToken(member.getEmail());
         //싱글톤으로 token을 저장할 ConcurrentHashMap 객체 생성
-        InMemoryTokenStore inMemoryTokenStore = new InMemoryTokenStore(token);
+        new InMemoryTokenStore(token);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(token,"Login Success"));
     }
 
+
+    @PostMapping("/api/logout")
+    public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) throws Exception {
+        final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
+        String jwtToken = requestTokenHeader.substring(7);
+        //로그아웃시 InMemoryTokenStore에 토큰을 제거한다.
+        InMemoryTokenStore.removeAccessToken(jwtToken);
+        return ResponseEntity.ok(new logoutResponse("Logout Success"));
+    }
 }
 
 @Data
@@ -60,5 +71,11 @@ class JwtRequest {
 class JwtResponse {
 
     private String token;
+    private String message;
 
+}
+
+@AllArgsConstructor
+class logoutResponse {
+    private String message;
 }

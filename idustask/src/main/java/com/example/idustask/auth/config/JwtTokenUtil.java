@@ -16,8 +16,8 @@ import java.util.function.Function;
 public class JwtTokenUtil {
     // 실제로 signWith에 해당하는 부분은 훨씬더 복잡한 Key를 byte형식으로 생성해서 줘야된다.
     // 원래 이 secret 키는 외부 노출되면 안됨
-    @Value("${jwt.secret")
-    private String secret;
+//    @Value("${jwt.secret")
+    private String secret = "jwtpassword";
 
     public static final long JWT_TOKEN_VALIDITY = 10 * 60 * 60;
 
@@ -59,7 +59,7 @@ public class JwtTokenUtil {
                 .setId(id)
                 .setIssuedAt(new Date(System.currentTimeMillis())) //토큰발행된 시간
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 100)) //토큰 만료시간 설정 1시간
-                .signWith(SignatureAlgorithm.HS512, secret.getBytes()) //토큰을 탈취하지 못하도록 secret key로 Hash값을 추출해 비밀키로 복호화한 뒤 토큰의 뒤에 붙여줍니다.
+                .signWith(SignatureAlgorithm.HS512, secret) //토큰을 탈취하지 못하도록 secret key로 Hash값을 추출해 비밀키로 복호화한 뒤 토큰의 뒤에 붙여줍니다.
                 .compact(); //토큰생성
     }
     //토큰의 유저네임과 db에 조회한 유저네임이 같고 토큰이 만료되지 않은경우 true
