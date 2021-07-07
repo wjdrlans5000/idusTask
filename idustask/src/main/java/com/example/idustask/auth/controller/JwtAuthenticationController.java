@@ -39,8 +39,7 @@ public class JwtAuthenticationController {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId",member.getId());
         claims.put("userEmail",member.getEmail());
-        claims.put("userName", member.getName());
-        final String token = jwtTokenUtil.generateToken(member.getEmail());
+        final String token = jwtTokenUtil.generateToken(member.getEmail(),claims);
         //싱글톤으로 token을 저장할 ConcurrentHashMap 객체 생성
         new InMemoryTokenStore(token);
 
@@ -75,6 +74,7 @@ class JwtResponse {
 
 }
 
+@Data
 @AllArgsConstructor
 class logoutResponse {
     private String message;
