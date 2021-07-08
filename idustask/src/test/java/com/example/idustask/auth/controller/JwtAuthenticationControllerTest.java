@@ -26,6 +26,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -58,8 +59,11 @@ public class JwtAuthenticationControllerTest extends BaseControllerTest {
                 .content(objectMapper.writeValueAsString(jwtRequest))
         )
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("token").exists())
+                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("message").value("Login Success"))
+                .andExpect(jsonPath("_links.self").exists())
                 ;
     }
 
@@ -82,7 +86,7 @@ public class JwtAuthenticationControllerTest extends BaseControllerTest {
                 .content(objectMapper.writeValueAsString(jwtRequest))
         )
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         var responseBody = perform.andReturn().getResponse().getContentAsString();
 
         HashMap<String, String> hashmap = new HashMap<String, String>();
@@ -107,19 +111,22 @@ public class JwtAuthenticationControllerTest extends BaseControllerTest {
         )
                 .andDo(print())
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("token").exists())
+                .andExpect(jsonPath("message").exists())
+                .andExpect(jsonPath("message").value("Logout Success"))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.login").exists())
         ;
+
+        //로그아웃 후 회원상세조회 요청
+        mockMvc.perform(get("/api/member/myinfo")
+                .accept(MediaTypes.HAL_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+        ;
+
     }
 
 
 
-
-    private Member getLoginMember(){
-        // 로그인한 사용자의 id를 userId로 설정
-        // email은 writerEmail로 설정
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserMember userMember = (UserMember) principal;
-        Member userDetails = userMember.getMember();
-        return userDetails;
-    }
 }

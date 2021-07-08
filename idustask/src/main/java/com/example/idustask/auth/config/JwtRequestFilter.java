@@ -71,7 +71,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if(jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 //InMemoryTokenStore에 저장된 토큰과 비교
-                 String store = InMemoryTokenStore.getTokenStore().get(jwtToken);
+                 String store = InMemoryTokenStore.getToken();
                 if(!store.equals(jwtToken)){
                     throw new BadCredentialsException("UnAuthorized");
                 }
