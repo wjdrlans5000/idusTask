@@ -1,8 +1,10 @@
 package com.example.idustask.order;
 
+import com.example.idustask.auth.controller.JwtAuthenticationController;
 import com.example.idustask.auth.model.UserMember;
 import com.example.idustask.auth.support.AuthUser;
 import com.example.idustask.member.Member;
+import com.example.idustask.member.MemberController;
 import com.example.idustask.order.dto.OrderInfoRequestDto;
 import com.example.idustask.order.dto.OrderInfoResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +55,7 @@ public class OrderInfoController {
         WebMvcLinkBuilder selfLinkBuilder = linkTo(OrderInfoController.class).slash(orderInfoResponseDto.getId());
         URI createUri = selfLinkBuilder.toUri();
 
+        orderInfoResource.add(linkTo(methodOn(MemberController.class).getMembers(null,null,null,null,null,null)).withRel("get-members"));
 
         return ResponseEntity.created(createUri).body(orderInfoResource);
     }

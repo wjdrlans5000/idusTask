@@ -24,6 +24,12 @@ public class MemberResponseDto {
     private final Member.Gender gender;
     private final List<OrderInfoResponseDto> orders;
 
+    public void setLastOrders(List<OrderInfoResponseDto> orderinfos) {
+        OrderInfoResponseDto orderInfo = orderinfos.get(orderinfos.size()-1);
+        this.orders.clear();
+        this.orders.add(orderInfo);
+    }
+
     public static MemberResponseDto from(final Member member) {
         //엔터티의 경우 그대로 사용하게되면 안됨
         List<OrderInfoResponseDto> list = member.getOrders().stream()

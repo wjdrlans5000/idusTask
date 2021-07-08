@@ -1,6 +1,8 @@
 package com.example.idustask.member;
 
+import com.example.idustask.member.dto.MemberResponseDto;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,24 +26,6 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
     @Override
     public Page<Member> findAllByMembers(Pageable pageable, String name, String email) {
-        /*
-          select
-          member1_.id as id1_0_,
-          member1_.email as email2_0_,
-          member1_.gender as gender3_0_,
-          member1_.name as name4_0_,
-          member1_.nick_name as nick_nam5_0_,
-          member1_.password as password6_0_,
-          member1_.phone_number as phone_nu7_0_
-         ,orderinfo0_.*
-          from
-          orderinfo orderinfo0_
-          inner join
-          member member1_
-          on orderinfo0_.mem_id=member1_.id
-          where orderinfo0_.id in (select max(id) from orderinfo group by mem_id  )
-        */
-
                 QueryResults<Member> result = (QueryResults<Member>) queryFactory.select(orderInfo.member)
                 .from(orderInfo)
                 .join(orderInfo.member)
@@ -57,7 +41,7 @@ public class MemberRepositoryImpl implements MemberRepositoryCustom {
 
 
 
-        return new PageImpl<>(result.getResults(),pageable,result.getTotal());
+        return new PageImpl<Member>(result.getResults(),pageable,result.getTotal());
 
     }
 

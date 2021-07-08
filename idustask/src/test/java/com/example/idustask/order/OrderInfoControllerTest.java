@@ -50,15 +50,23 @@ public class OrderInfoControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("productName").exists())
                 .andExpect(jsonPath("buyDate").exists())
+                .andExpect(jsonPath("_links.self").exists())
                 ;
 
         //회원 주문 목록 조회
-        mockMvc.perform(get("/api/member/{id}",21)
+        mockMvc.perform(get("/api/member/",21)
+                .param("page","0") //패이지는 0부터 시작
+                .param("size","10")
+                .param("sort","id,DESC")
+                //이름, 이메일로 검색
+//                .param("name","네임")
+//                .param("email","testUser0@mail.com")
                 .accept(MediaTypes.HAL_JSON)
         )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_embedded").exists())
+                .andExpect(jsonPath("_links.self").exists())
         ;
     }
 

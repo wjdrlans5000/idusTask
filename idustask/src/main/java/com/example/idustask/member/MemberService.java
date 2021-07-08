@@ -10,6 +10,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -18,14 +21,14 @@ public class MemberService {
     private final PasswordEncoder encode;
 
     @Transactional
-    public Member saveMember(final MemberRequestDto memberDto){
+    public MemberResponseDto saveMember(final MemberRequestDto memberDto){
         Member member =  memberRepository.save(Member.createMember(memberDto.getEmail(),
                                                                     encode.encode(memberDto.getPassword()),
                                                                     memberDto.getName(),
                                                                     memberDto.getNickName(),
                                                                     memberDto.getPhoneNumber(),
                                                                     memberDto.getGender()));
-        return member;
+        return MemberResponseDto.from(member);
     }
 
     public MemberResponseDto getMember(final Integer id) {
@@ -39,6 +42,10 @@ public class MemberService {
     }
 
     public Page<Member> getMembers(final Pageable pageable, String name, String email) {
-        return memberRepository.findAllByMembers(pageable, name, email);
+
+        Page<Member> page = memberRepository.findAllByMembers(pageable, name, email);
+
+        return page;
     }
 }
+

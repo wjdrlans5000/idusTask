@@ -51,10 +51,8 @@ public class MemberControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("email").exists())
-//                .andExpect(jsonPath("_links.self").exists())
-//                .andExpect(jsonPath("_links.approval").exists())
-//                .andExpect(jsonPath("_links.document-list").exists())
-//                .andExpect(jsonPath("_links.document-get").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.login").exists())
 //                .andExpect(jsonPath("_links.profile").exists())
         ;
     }
@@ -112,7 +110,7 @@ public class MemberControllerTest extends BaseControllerTest {
     @TestDescription(" 회원 목록 조회")
     public void getMembers() throws Exception {
 
-        //When & Then
+        //회원의 마지막 주문목록만 조회
         mockMvc.perform(get("/api/member")
                 .param("page","0") //패이지는 0부터 시작
                 .param("size","10")
@@ -120,11 +118,28 @@ public class MemberControllerTest extends BaseControllerTest {
                 //이름, 이메일로 검색
                 .param("name","네임")
                 .param("email","testUser0@mail.com")
+                .param("last","true")
                 .accept(MediaTypes.HAL_JSON)
         )
                 .andDo(print())
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+        ;
+
+        //회원의 모든 주문목록 조회
+        mockMvc.perform(get("/api/member")
+                .param("page","0") //패이지는 0부터 시작
+                .param("size","10")
+                .param("sort","id,DESC")
+                //이름, 이메일로 검색
+                .param("name","네임")
+                .param("email","testUser0@mail.com")
+                .param("last","false")
+                .accept(MediaTypes.HAL_JSON)
+        )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("_links.self").exists())
         ;
     }
 
