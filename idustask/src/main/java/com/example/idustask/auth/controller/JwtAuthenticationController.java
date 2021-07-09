@@ -49,7 +49,7 @@ public class JwtAuthenticationController {
         claims.put("userEmail",member.getEmail());
         final String token = jwtTokenUtil.generateToken(member.getEmail(),claims);
         //싱글톤으로 token을 저장할 ConcurrentHashMap 객체 생성
-        InMemoryTokenStore.setToken(token);
+        new InMemoryTokenStore(token);
 
         WebMvcLinkBuilder selfLinkBuilder =  linkTo(methodOn(JwtAuthenticationController.class).createAuthenticationToken(null));
         URI createUri = selfLinkBuilder.toUri();
@@ -66,7 +66,7 @@ public class JwtAuthenticationController {
         final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
         String jwtToken = requestTokenHeader.substring(7);
         //로그아웃시 InMemoryTokenStore에 토큰을 제거한다.
-        InMemoryTokenStore.removeToken();
+        InMemoryTokenStore.removeAccessToken(jwtToken);
 
         EntityModel<LogoutResponse> entityModel = EntityModel.of(new LogoutResponse("Logout Success"));
         entityModel.add(linkTo(methodOn(JwtAuthenticationController.class).logout(null)).withSelfRel());

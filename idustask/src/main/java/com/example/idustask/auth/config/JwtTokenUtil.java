@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +14,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Component
+@PropertySource("classpath:application.properties")
 public class JwtTokenUtil {
     // 실제로 signWith에 해당하는 부분은 훨씬더 복잡한 Key를 byte형식으로 생성해서 줘야된다.
     // 원래 이 secret 키는 외부 노출되면 안됨
-//    @Value("${jwt.secret")
-    private String secret = "jwtpassword";
+    @Value("${jwt.secret}")
+    private String secret;
 
     public static final long JWT_TOKEN_VALIDITY = 10 * 60 * 60;
 

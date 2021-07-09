@@ -3,14 +3,12 @@ package com.example.idustask.auth.config;
 import com.example.idustask.auth.service.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -23,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 /*
- * jwtRequestFilter 역시 중요한 부분중 하나인데 OncePerRequestFilter 를 상속받은 클래스로써 요청당 한번의 filter를 수행하도록 doFilterInternal() 메서드를 구현해주면 된다.
+ * jwtRequestFilter 역시 중요한 부분중 하나인데 OncePerRequestFilter 를 상속받은 클래스로써 요청당 한번의 filter를 수행하도록  () 메서드를 구현해주면 된다.
  */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -71,9 +69,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if(jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                 //InMemoryTokenStore에 저장된 토큰과 비교
-                 String store = InMemoryTokenStore.getToken();
+                 String store = InMemoryTokenStore.getTokenStore().get("token");
                 if(!store.equals(jwtToken)){
-                    throw new BadCredentialsException("UnAuthorized");
+                    httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "UnAuthorized");
+//                    throw new BadCredentialsException("UnAuthorized");
                 }
 
                 UsernamePasswordAuthenticationToken authenticationToken =
