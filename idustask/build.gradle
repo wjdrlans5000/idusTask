@@ -5,6 +5,13 @@ plugins {
     id 'java'
 }
 
+ext {
+    swagger_version = '3.0.0'
+    springBoot_version = '2.5.2'
+    jjwt_version = '0.9.1'
+    JUnitParams_version = '1.1.1'
+}
+
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -25,9 +32,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.5.2'
-    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
-    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: "$springBoot_version"
+    implementation group: 'io.springfox', name: 'springfox-boot-starter', version: "$swagger_version"
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: "$swagger_version"
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: "$jjwt_version"
     implementation group: 'javax.xml.bind', name: 'jaxb-api'
     implementation group: 'com.querydsl', name: 'querydsl-apt'
     implementation group: 'com.querydsl', name: 'querydsl-jpa'
@@ -36,7 +44,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: '1.1.1'
+    testImplementation group: 'pl.pragmatists', name: 'JUnitParams', version: "$JUnitParams_version"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 }
 
