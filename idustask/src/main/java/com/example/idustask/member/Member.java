@@ -7,14 +7,14 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Entity
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
+    // GeneratedValue(strategy = GenerationType.AUTO) : 기본 설정값
+    // 방언에 따라 세 가지 전략을 자동으로 지정한다.
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -70,10 +70,7 @@ public class Member {
 
     //성별
     public enum Gender {
-        // 승인
         MALE,
-        // 거절
-        FEMALE,
-        ;
+        FEMALE;
     }
 }

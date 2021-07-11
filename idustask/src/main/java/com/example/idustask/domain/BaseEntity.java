@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(of = "id")
 public class BaseEntity implements Serializable {
+    // 기본 키 생성을 데이터베이스에 위임 : DB가 AUTO_INCREMENT
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

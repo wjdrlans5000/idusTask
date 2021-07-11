@@ -1,8 +1,6 @@
 package com.example.idustask.member;
 
-import com.example.idustask.member.dto.MemberResponseDto;
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -16,7 +14,6 @@ import javax.persistence.EntityManager;
 import static com.example.idustask.order.QOrderInfo.orderInfo;
 
 
-//Repository명 + Impl >> 명명규칙 해당이름으로 정의하면 jpa에서 매핑해줌
 public class MemberRepositoryImpl implements MemberRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 

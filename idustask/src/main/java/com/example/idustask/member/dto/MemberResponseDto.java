@@ -1,13 +1,10 @@
 package com.example.idustask.member.dto;
 
 import com.example.idustask.member.Member;
-import com.example.idustask.order.OrderInfo;
 import com.example.idustask.order.dto.OrderInfoResponseDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.*;
 import java.util.List;
 import java.util.stream.Collectors;
 

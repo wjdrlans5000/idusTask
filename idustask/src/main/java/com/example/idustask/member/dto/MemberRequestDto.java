@@ -38,14 +38,4 @@ public class MemberRequestDto {
 
     private Member.Gender gender;
 
-    public static MemberRequestDto from(final Member member) {
-        return new MemberRequestDto(
-                member.getEmail(),
-                member.getPassword(),
-                member.getName(),
-                member.getNickName(),
-                member.getPhoneNumber(),
-                member.getGender()
-        );
-    }
 }

@@ -10,8 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,16 +34,21 @@ public class MemberService {
         return MemberResponseDto.from(member);
     }
 
-    private Member findById(final int id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new MemberNotFoundException(id + "is not found"));
-    }
 
-    public Page<Member> getMembers(final Pageable pageable, String name, String email) {
+    public Page<MemberResponseDto> getMembers(final Pageable pageable, String name, String email, boolean last) {
 
         Page<Member> page = memberRepository.findAllByMembers(pageable, name, email);
 
-        return page;
+        Page<MemberResponseDto> page2 = page.map(member -> MemberResponseDto.from(member));
+        if(last){
+            page2.getContent().stream().forEach(memberResponseDto ->  memberResponseDto.setLastOrders(memberResponseDto.getOrders()));
+        }
+        return page2;
+    }
+
+    private Member findById(final int id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new MemberNotFoundException(id + "is not found"));
     }
 }
 
