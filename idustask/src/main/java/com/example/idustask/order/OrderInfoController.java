@@ -49,7 +49,7 @@ public class OrderInfoController {
         URI createUri = selfLinkBuilder.toUri();
 
         orderInfoResource.add(linkTo(methodOn(MemberController.class).getMembers(null,null,null,null,null,null)).withRel("get-members"));
-        orderInfoResource.add(Link.of("http://localhost/swagger-ui/index.html").withRel("profile"));
+        orderInfoResource.add(Link.of("/swagger-ui/index.html").withRel("profile"));
         return ResponseEntity.created(createUri).body(orderInfoResource);
     }
 }
