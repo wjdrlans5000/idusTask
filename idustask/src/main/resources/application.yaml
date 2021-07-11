@@ -38,8 +38,9 @@ jwt:
   secret: jwtpassword
   jwt_token_validity: 36000
 
-urlfilter:
+permit-url:
   permitALL_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**]
+exclude-filter:
   exclude_filter_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**]
 
-adminemail: admin@email.com
+admin: admin@email.com

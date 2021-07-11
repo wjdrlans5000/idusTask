@@ -22,12 +22,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@ConfigurationProperties("adminemail")
+@ConfigurationProperties("admin")
 @Getter
 @Setter
 public class JwtUserDetailsService implements UserDetailsService {
 
-    private String adminemail;
+    private String admin;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -57,7 +57,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         }
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
-        if (email.equals(this.adminemail)) {
+        if (email.equals(this.admin)) {
             grantedAuthorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
         }
         this.userDetails.put("userDetails",new UserMember(member, grantedAuthorities));

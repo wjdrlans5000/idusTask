@@ -19,7 +19,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@ConfigurationProperties("urlfilter")
+@ConfigurationProperties("permit-url")
 @Getter
 @Setter
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {

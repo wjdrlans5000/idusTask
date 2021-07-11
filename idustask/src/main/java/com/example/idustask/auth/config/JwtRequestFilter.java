@@ -26,7 +26,7 @@ import java.util.*;
 /*
  * OncePerRequestFilter 를 상속받은 클래스로써 요청당 한번의 filter를 수행
  */
-@ConfigurationProperties("urlfilter")
+@ConfigurationProperties("exclude-filter")
 @Getter
 @Setter
 @Component
