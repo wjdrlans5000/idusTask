@@ -5,9 +5,14 @@ import com.example.idustask.auth.support.AuthUser;
 import com.example.idustask.common.ErrorsResource;
 import com.example.idustask.member.dto.MemberRequestDto;
 import com.example.idustask.member.dto.MemberResponseDto;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
@@ -15,6 +20,7 @@ import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -57,18 +63,31 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity getMembers(Pageable pageable,
-                                     PagedResourcesAssembler<MemberResponseDto> assembler,
+    @ApiOperation(value = "회원 목록 조회" , notes = "전체 회원 목록을 조회한다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "페이지번호", required = false)
+            ,@ApiImplicitParam(name = "size", value = "페이지크기", required = false)
+            ,@ApiImplicitParam(name = "sort", value = "정렬", required = false)
+            ,@ApiImplicitParam(name = "name", value = "이름", required = false)
+            ,@ApiImplicitParam(name = "email", value = "이메일", required = false)
+            ,@ApiImplicitParam(name = "last", value = "마지막 주문정보만 조회할지 여부", required = false)
+    })
+    public ResponseEntity getMembers(
+                                     @RequestParam(required = false) Integer page,
+                                     @RequestParam(required = false) Integer size,
+                                     @RequestParam(required = false) String sort,
+                                     @ApiIgnore Pageable pageable,
+                                     @ApiIgnore PagedResourcesAssembler<MemberResponseDto> assembler,
                                      @RequestParam(required = false) String name,
                                      @RequestParam(required = false) String email,
                                      @RequestParam(required = false, defaultValue = "false") Boolean last,
-                                     @AuthUser final Member member
+                                     @ApiIgnore @AuthUser final Member member
     ) {
 
-        Page<MemberResponseDto> page = service.getMembers(pageable,name,email,last);
+        Page<MemberResponseDto> dtoPage = service.getMembers(pageable,name,email,last);
 
         //Page 를 페이징처리가 된 Model 목록으로 변환해준다.
-        PagedModel pagedResources = assembler.toModel(page, e -> new MemberResource(e, linkTo(MemberController.class).withSelfRel()));
+        PagedModel pagedResources = assembler.toModel(dtoPage, e -> new MemberResource(e, linkTo(MemberController.class).withSelfRel()));
 
         pagedResources.add(Link.of("/swagger-ui/index.html").withRel("profile"));
         return ResponseEntity.ok(pagedResources);

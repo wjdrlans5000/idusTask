@@ -48,7 +48,7 @@ public class OrderInfoController {
         WebMvcLinkBuilder selfLinkBuilder = linkTo(OrderInfoController.class);
         URI createUri = selfLinkBuilder.toUri();
 
-        orderInfoResource.add(linkTo(methodOn(MemberController.class).getMembers(null,null,null,null,null,null)).withRel("get-members"));
+        orderInfoResource.add(linkTo(methodOn(MemberController.class).getMembers(null,null,null,null,null,null,null,null,null)).withRel("get-members"));
         orderInfoResource.add(Link.of("/swagger-ui/index.html").withRel("profile"));
         return ResponseEntity.created(createUri).body(orderInfoResource);
     }
