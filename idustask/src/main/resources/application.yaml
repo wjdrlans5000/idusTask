@@ -11,13 +11,15 @@ spring:
     username: sa
     password:
 
+
   h2:
     console:
       enabled: true
 # hibernate를 통하여 테이블을 자동 생성 및 sql logging 관련 설정
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
+    generate-ddl: true
     properties:
       hibernate:
         jdbc:
