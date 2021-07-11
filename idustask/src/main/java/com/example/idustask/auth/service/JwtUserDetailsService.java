@@ -4,7 +4,10 @@ import com.example.idustask.auth.model.UserMember;
 import com.example.idustask.member.Member;
 import com.example.idustask.member.MemberRepository;
 import com.example.idustask.member.Role;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,9 +19,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@ConfigurationProperties("adminemail")
+@Getter
+@Setter
 public class JwtUserDetailsService implements UserDetailsService {
+
+    private String adminemail;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -26,19 +35,15 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     private MemberRepository memberRepository;
 
-    //UserDetailsService를 상속받아서 loadUserByUsername 오버라이딩
-    //email로 계정 조회하여 권한 설정
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email));
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
-        if (email.equals("wjdrlans4000@naver.com")) {
-            grantedAuthorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
-        }
+    private ConcurrentHashMap<String,UserDetails> userDetails = new ConcurrentHashMap<>();
 
-        return new UserMember(member, grantedAuthorities);
+    public ConcurrentHashMap<String, UserDetails> getUserDetails() {
+        return userDetails;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 
 
@@ -50,6 +55,12 @@ public class JwtUserDetailsService implements UserDetailsService {
         if(!passwordEncoder.matches(password, member.getPassword())) {
             throw new BadCredentialsException("Password not matched");
         }
+        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        grantedAuthorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
+        if (email.equals(this.adminemail)) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
+        }
+        this.userDetails.put("userDetails",new UserMember(member, grantedAuthorities));
 
         return member;
     }

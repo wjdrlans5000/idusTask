@@ -1,6 +1,9 @@
 package com.example.idustask.auth.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,10 +15,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@ConfigurationProperties("urlfilter")
+@Getter
+@Setter
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private List<String> permitALL_url_list;
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -47,10 +56,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     //Security Filter 로 들어온 이후에 Role 등을 이용하여 인증 적용 여부를 결정한다.
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        matchUrlAndAuthority(http);
 
         http
                 .csrf().disable()
-                .authorizeRequests().antMatchers("/api/signin", "/api/member/signup", "/docs/index.html","/h2-console/**").permitAll()
+                .authorizeRequests().antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 //- exceptionHandling을 위해서 실제 구현한 jwtAuthenticationEntryPoint을 넣어준다
@@ -69,6 +79,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //커스텀 필터를 UsernamePasswordAuthenticationFilter 보다 앞에서 실행되도록 설정
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    private void matchUrlAndAuthority(HttpSecurity http) throws Exception {
+        for (String matcher : permitALL_url_list) {
+            http
+                    .authorizeRequests()
+                    .antMatchers(matcher).permitAll();
+        }
     }
 
 }

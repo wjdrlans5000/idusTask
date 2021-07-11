@@ -1,24 +1,26 @@
 package com.example.idustask.auth.config;
 
 
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class InMemoryTokenStore {
 
 
-    private static ConcurrentHashMap<String, String> tokenStore;
+    private ConcurrentHashMap<String, String> tokenStore = new ConcurrentHashMap<>();
 
-    public InMemoryTokenStore(String token) {
-        this.tokenStore = new ConcurrentHashMap<>();
+    public void setTokenStore(String token) {
         this.tokenStore.put("token",token);
     }
 
-    public static void removeAccessToken(String jwtToken) {
-        tokenStore.replace("token","");
+    public void removeAccessToken() {
+        this.tokenStore.remove("token");
     }
 
-    public static ConcurrentHashMap<String, String> getTokenStore() {
-        return tokenStore;
+    public String getTokenStore() {
+        return this.tokenStore.get("token");
     }
 
 }

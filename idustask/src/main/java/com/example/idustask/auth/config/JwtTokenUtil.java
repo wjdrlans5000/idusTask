@@ -1,14 +1,11 @@
 package com.example.idustask.auth.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -21,11 +18,12 @@ import java.util.function.Function;
 @Getter
 @Setter
 public class JwtTokenUtil {
-    // 실제로 signWith에 해당하는 부분은 훨씬더 복잡한 Key를 byte형식으로 생성해서 줘야된다.
-    // 원래 이 secret 키는 외부 노출되면 안됨
+
     private String secret;
 
     private long jwt_token_validity;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     //토큰으로 유저네임 확인
     public String getUsernameFromToken(String token) {
@@ -38,8 +36,22 @@ public class JwtTokenUtil {
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        } catch (SecurityException e) {
+            LOGGER.info("Invalid JWT signature.");
+        } catch (MalformedJwtException e) {
+            LOGGER.info("Invalid JWT token.");
+        } catch (ExpiredJwtException e) {
+            LOGGER.info("Expired JWT token.");
+        } catch (UnsupportedJwtException e) {
+            LOGGER.info("Unsupported JWT token.");
+        } catch (IllegalArgumentException e) {
+            LOGGER.info("JWT token compact of handler are invalid.");
+        }
+        return null;
     }
+
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
@@ -61,16 +73,15 @@ public class JwtTokenUtil {
     private String doGenerateToken(String id, Map<String, Object> claims) {
         //[5].사용자 이메일로 토큰을 생성한다.
         return Jwts.builder()
-                .setClaims(claims) //Payload(내용) 정보 하나하나를 각각 클레임 (claim)이라고 부른다 Claim은 key/value
+                .setClaims(claims)
                 .setId(id)
-                .setIssuedAt(new Date(System.currentTimeMillis())) //토큰발행된 시간
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwt_token_validity * 100)) //토큰 만료시간 설정 1시간
-                .signWith(SignatureAlgorithm.HS512, secret) //토큰을 탈취하지 못하도록 secret key로 Hash값을 추출해 비밀키로 복호화한 뒤 토큰의 뒤에 붙여줍니다.
-                .compact(); //토큰생성
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
     }
-    //토큰의 유저네임과 db에 조회한 유저네임이 같고 토큰이 만료되지 않은경우 true
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+
+    public Boolean validateToken(String token) {
+        return getAllClaimsFromToken(token) != null;
     }
 }
