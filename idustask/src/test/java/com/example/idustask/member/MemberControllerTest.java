@@ -39,7 +39,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .gender(Member.Gender.MALE)
                 .build();
 
-        MemberRequestDto memberRequestDto = MemberRequestDto.from(member);
+        MemberRequestDto memberRequestDto = MemberRequestDtoFrom(member);
 
 
         mockMvc.perform(post("/api/member/signup")
@@ -53,7 +53,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("email").exists())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.login").exists())
-//                .andExpect(jsonPath("_links.profile").exists())
+                .andExpect(jsonPath("_links.profile").exists())
         ;
     }
 
@@ -75,7 +75,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .gender(Member.Gender.MALE)
                 .build();
 
-        MemberRequestDto memberRequestDto = MemberRequestDto.from(member);
+        MemberRequestDto memberRequestDto = MemberRequestDtoFrom(member);
 
 
         mockMvc.perform(post("/api/member/signup")
@@ -102,6 +102,8 @@ public class MemberControllerTest extends BaseControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
         ;
     }
 
@@ -124,6 +126,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
         ;
 
         //회원의 모든 주문목록 조회
@@ -140,6 +143,7 @@ public class MemberControllerTest extends BaseControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
         ;
     }
 
@@ -151,5 +155,16 @@ public class MemberControllerTest extends BaseControllerTest {
         UserMember userMember = (UserMember) principal;
         Member userDetails = userMember.getMember();
         return userDetails;
+    }
+
+    private MemberRequestDto MemberRequestDtoFrom(final Member member){
+        return new MemberRequestDto(
+                member.getEmail(),
+                member.getPassword(),
+                member.getName(),
+                member.getNickName(),
+                member.getPhoneNumber(),
+                member.getGender()
+        );
     }
 }

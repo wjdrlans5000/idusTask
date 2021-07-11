@@ -1,19 +1,15 @@
 package com.example.idustask.auth.controller;
 
-import com.example.idustask.auth.model.UserMember;
 import com.example.idustask.common.BaseControllerTest;
 import com.example.idustask.common.TestDescription;
-import com.example.idustask.config.WithMockCustomUser;
 import com.example.idustask.member.Member;
 import com.example.idustask.member.MemberRepository;
-import com.example.idustask.member.dto.MemberRequestDto;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
@@ -21,11 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
 
-import static org.junit.Assert.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -119,6 +111,8 @@ public class JwtAuthenticationControllerTest extends BaseControllerTest {
 
         //로그아웃 후 회원상세조회 요청
         mockMvc.perform(get("/api/member/myinfo")
+                .header(HttpHeaders.AUTHORIZATION, loginToken)
+                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaTypes.HAL_JSON)
         )
                 .andDo(print())
