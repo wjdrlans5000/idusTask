@@ -61,7 +61,7 @@ public class MemberController {
                                      PagedResourcesAssembler<MemberResponseDto> assembler,
                                      @RequestParam(required = false) String name,
                                      @RequestParam(required = false) String email,
-                                     @RequestParam(required = false) Boolean last,
+                                     @RequestParam(required = false, defaultValue = "false") Boolean last,
                                      @AuthUser final Member member
     ) {
 
