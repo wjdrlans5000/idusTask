@@ -71,7 +71,6 @@ public class JwtTokenUtil {
     }
 
     private String doGenerateToken(String id, Map<String, Object> claims) {
-        //[5].사용자 이메일로 토큰을 생성한다.
         return Jwts.builder()
                 .setClaims(claims)
                 .setId(id)

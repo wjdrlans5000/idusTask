@@ -48,10 +48,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
 
     public Member authenticateByEmailAndPassword(String email, String password) {
-        //[3].사용자 이메일로 db에서 계정정보를 조회한다.
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email));
-        //[3.1].사용자 이메일로 조회된 패스워드가 [2]에서 인증요청한 패스워드와 일치하는지를 확인한다. (passwordEncoder를 사용하여 인코딩된 패스워드가 일치하는지 확인)
+
         if(!passwordEncoder.matches(password, member.getPassword())) {
             throw new BadCredentialsException("Password not matched");
         }

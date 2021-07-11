@@ -35,13 +35,10 @@ public class JwtAuthenticationController {
     @Autowired
     private InMemoryTokenStore tokenStore;
 
-    //[2].로그인할 이메일과 패스워드를 사용하여 인증요청을 함
     @PostMapping("/api/signin")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         final Member member = userDetailService.authenticateByEmailAndPassword
                 (authenticationRequest.getEmail(), authenticationRequest.getPassword());
-        //[4].사용자 인증에 성공하면 토큰을 생성한다.
-        //클레임도 파라미터로 넘겨주자
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId",member.getId());
         claims.put("userEmail",member.getEmail());
