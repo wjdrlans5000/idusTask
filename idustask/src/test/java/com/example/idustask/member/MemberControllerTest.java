@@ -133,10 +133,10 @@ public class MemberControllerTest extends BaseControllerTest {
         mockMvc.perform(get("/api/member")
                 .param("page","0") //패이지는 0부터 시작
                 .param("size","10")
-                .param("sort","id,DESC")
+                .param("sort","id,desc")
                 //이름, 이메일로 검색
-                .param("name","네임")
-                .param("email","testUser0@mail.com")
+//                .param("name","네임")
+//                .param("email","testUser0@mail.com")
                 .param("last","false")
                 .accept(MediaTypes.HAL_JSON)
         )

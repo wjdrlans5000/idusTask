@@ -43,7 +43,7 @@ public class MemberController {
 
         MemberResource memberResource = new MemberResource(memberResponseDto, linkTo(methodOn(MemberController.class).saveMember(memberDto, errors)).withSelfRel());
         memberResource.add(linkTo(methodOn(JwtAuthenticationController.class).createAuthenticationToken(null)).withRel("login"));
-        memberResource.add(Link.of("http://localhost/swagger-ui/index.html").withRel("profile"));
+        memberResource.add(Link.of("/swagger-ui/index.html").withRel("profile"));
         return ResponseEntity.created(createUri).body(memberResource);
     }
 
@@ -52,7 +52,7 @@ public class MemberController {
 
         MemberResponseDto memberResponseDto = service.getMember(member.getId());
         MemberResource memberResource = new MemberResource(memberResponseDto, linkTo(methodOn(MemberController.class).getMember(member)).withSelfRel());
-        memberResource.add(Link.of("http://localhost/swagger-ui/index.html").withRel("profile"));
+        memberResource.add(Link.of("/swagger-ui/index.html").withRel("profile"));
         return ResponseEntity.ok(memberResource);
     }
 
@@ -70,7 +70,7 @@ public class MemberController {
         //Page 를 페이징처리가 된 Model 목록으로 변환해준다.
         PagedModel pagedResources = assembler.toModel(page, e -> new MemberResource(e, linkTo(MemberController.class).withSelfRel()));
 
-        pagedResources.add(Link.of("http://localhost/swagger-ui/index.html").withRel("profile"));
+        pagedResources.add(Link.of("/swagger-ui/index.html").withRel("profile"));
         return ResponseEntity.ok(pagedResources);
     }
 
