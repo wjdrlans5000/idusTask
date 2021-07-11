@@ -10,7 +10,7 @@
         - spring data jpa
         - querydsl
     - 인증
-        - spring secority
+        - spring security
         - jsonwebtoken
     - API문서
         - swagger-ui
