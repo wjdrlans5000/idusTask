@@ -39,7 +39,7 @@ jwt:
   jwt_token_validity: 36000
 
 urlfilter:
-  permitALL_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**, /webjars/**, /actuator/health]
-  exclude_filter_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**, /webjars/**, /actuator/health]
+  permitALL_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**]
+  exclude_filter_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**]
 
 adminemail: admin@email.com
