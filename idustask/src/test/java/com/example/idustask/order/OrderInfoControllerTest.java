@@ -6,7 +6,6 @@ import com.example.idustask.common.TestDescription;
 import com.example.idustask.config.WithMockCustomUser;
 import com.example.idustask.member.Member;
 import com.example.idustask.member.MemberRepository;
-import com.example.idustask.member.dto.MemberRequestDto;
 import com.example.idustask.order.dto.OrderInfoRequestDto;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +13,6 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-
-import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,8 +30,8 @@ public class OrderInfoControllerTest extends BaseControllerTest {
     @TestDescription("로그인한 사용자로 주문생성 테스트")
     public void createOrderInfo() throws Exception{
 
-        Date date = new Date(System.currentTimeMillis());
-        OrderInfo orderInfo = new OrderInfo(getLoginMember(), "떡", date.toString());
+//        Date date = new Date(System.currentTimeMillis());
+        OrderInfo orderInfo = new OrderInfo(getLoginMember(), "떡");
 
         OrderInfoRequestDto orderInfoRequestDto = OrderInfoRequestDto.from(orderInfo);
         Member member = memberRepository.save(getLoginMember());
@@ -54,13 +49,14 @@ public class OrderInfoControllerTest extends BaseControllerTest {
                 ;
 
         //회원 주문 목록 조회
-        mockMvc.perform(get("/api/member/",21)
+        mockMvc.perform(get("/api/member")
                 .param("page","0") //패이지는 0부터 시작
                 .param("size","10")
                 .param("sort","id,DESC")
                 //이름, 이메일로 검색
 //                .param("name","네임")
-//                .param("email","testUser0@mail.com")
+                .param("email","tester@mail.com")
+                        .param("last","false")
                 .accept(MediaTypes.HAL_JSON)
         )
                 .andDo(print())

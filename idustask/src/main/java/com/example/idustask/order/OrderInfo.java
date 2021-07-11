@@ -5,8 +5,10 @@ import com.example.idustask.member.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -22,17 +24,16 @@ public class OrderInfo extends BaseEntity {
     @Column(nullable = false)
     private String productName;
 
-    @Column(nullable = false)
-    private String buyDate;
+    @CreatedDate
+    private LocalDateTime buyDate;
 
-    public OrderInfo(Member member, String productName, String buyDate) {
+    public OrderInfo(Member member, String productName) {
         this.member = member;
         this.productName = productName;
-        this.buyDate = buyDate;
     }
 
     //주문 생성시 멤버에 주문정보 UPDATE
-    public static OrderInfo createOrderInfo(Member member, String productName, String buyDate) {
-        return new OrderInfo(member, productName, buyDate);
+    public static OrderInfo createOrderInfo(Member member, String productName) {
+        return new OrderInfo(member, productName);
     }
 }

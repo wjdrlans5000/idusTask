@@ -5,6 +5,8 @@ import com.example.idustask.order.OrderInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @RequiredArgsConstructor
 public class OrderInfoResponseDto {
@@ -16,7 +18,7 @@ public class OrderInfoResponseDto {
 
     private final String productName;
 
-    private final String buyDate;
+    private final LocalDateTime buyDate;
 
 
     public static OrderInfoResponseDto from(final OrderInfo orderinfo) {
