@@ -94,7 +94,7 @@ public class JwtAuthenticationControllerTest extends BaseControllerTest {
             hashmap.put(k, json.getString(k)); // key, value를 map에 삽입
         }
 
-        String loginToken = "Bearer " + hashmap.get("token");
+        String loginToken = hashmap.get("token");
 
         mockMvc.perform(post("/api/logout")
                 .header(HttpHeaders.AUTHORIZATION, loginToken)
