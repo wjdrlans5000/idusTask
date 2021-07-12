@@ -6,6 +6,7 @@ import com.example.idustask.member.Member;
 import com.example.idustask.member.MemberController;
 import com.example.idustask.order.dto.OrderInfoRequestDto;
 import com.example.idustask.order.dto.OrderInfoResponseDto;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -30,10 +32,11 @@ public class OrderInfoController {
     private final OrderInfoService orderInfoService;
 
     @PostMapping
+    @ApiOperation(value = "주문생성" , notes = "로그인한 회원의 주문정보를 생성한다")
     public ResponseEntity createOrderInfo(
             @Valid @RequestBody final OrderInfoRequestDto orderInfoRequestDto,
-            final Errors errors,
-            @AuthUser final Member member) {
+            @ApiIgnore final Errors errors,
+            @ApiIgnore @AuthUser final Member member) {
 
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().body(new ErrorsResource(errors));

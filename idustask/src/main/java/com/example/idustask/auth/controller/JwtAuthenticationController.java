@@ -4,6 +4,7 @@ import com.example.idustask.auth.config.InMemoryTokenStore;
 import com.example.idustask.auth.config.JwtTokenUtil;
 import com.example.idustask.auth.service.JwtUserDetailsService;
 import com.example.idustask.member.Member;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class JwtAuthenticationController {
     private InMemoryTokenStore tokenStore;
 
     @PostMapping("/api/signin")
+    @ApiOperation(value = "로그인" , notes = "로그인성공시 인증에 사용할 토큰을 발급한다.")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         final Member member = userDetailService.authenticateByEmailAndPassword
                 (authenticationRequest.getEmail(), authenticationRequest.getPassword());
@@ -49,7 +51,7 @@ public class JwtAuthenticationController {
         WebMvcLinkBuilder selfLinkBuilder =  linkTo(methodOn(JwtAuthenticationController.class).createAuthenticationToken(null));
         URI createUri = selfLinkBuilder.toUri();
 
-        EntityModel<JwtResponse> entityModel = EntityModel.of(new JwtResponse(token,"Login Success"));
+        EntityModel<JwtResponse> entityModel = EntityModel.of(new JwtResponse("Bearer "+token,"Login Success"));
         entityModel.add(linkTo(methodOn(JwtAuthenticationController.class).createAuthenticationToken(authenticationRequest)).withSelfRel());
 
         return ResponseEntity.created(createUri).body(entityModel);
@@ -57,6 +59,7 @@ public class JwtAuthenticationController {
 
 
     @PostMapping("/api/logout")
+    @ApiOperation(value = "로그아웃" , notes = "로그아웃시 해당 토큰으로 로그인할수 없다. 새로 토큰을 발급받아야한다.")
     public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) throws Exception {
         //로그아웃시 InMemoryTokenStore에 토큰을 제거한다.
         tokenStore.removeAccessToken();

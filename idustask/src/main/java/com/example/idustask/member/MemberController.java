@@ -37,7 +37,8 @@ public class MemberController {
 
     //[1].회원가입 : 리퀘스트 바디로 사용자 정보를 받아서 저장한다.
     @PostMapping("/signup")
-    public ResponseEntity saveMember(@Valid @RequestBody MemberRequestDto memberDto, Errors errors) throws Exception {
+    @ApiOperation(value = "회원 가입" , notes = "회원기본정보를 입력하여 회원가입을 한다.")
+    public ResponseEntity saveMember(@Valid @RequestBody MemberRequestDto memberDto, @ApiIgnore Errors errors) throws Exception {
 
         if(errors.hasErrors()){
             return ResponseEntity.badRequest().body(new ErrorsResource(errors));
@@ -54,7 +55,8 @@ public class MemberController {
     }
 
     @GetMapping("/myinfo")
-    public ResponseEntity getMember(@AuthUser final Member member) throws Exception {
+    @ApiOperation(value = "회원 상세 조회" , notes = "현재 로그인한 회원의 상세 정보 및 주문목록을 조회한다.")
+    public ResponseEntity getMember( @ApiIgnore @AuthUser final Member member) throws Exception {
 
         MemberResponseDto memberResponseDto = service.getMember(member.getId());
         MemberResource memberResource = new MemberResource(memberResponseDto, linkTo(methodOn(MemberController.class).getMember(member)).withSelfRel());
@@ -63,11 +65,11 @@ public class MemberController {
     }
 
     @GetMapping
-    @ApiOperation(value = "회원 목록 조회" , notes = "전체 회원 목록을 조회한다.")
+    @ApiOperation(value = "회원 목록 조회" , notes = "전체 회원 목록을 조회하며, 이름과 이메일로 특정 회원을 검색할수 있다.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "페이지번호", required = false)
-            ,@ApiImplicitParam(name = "size", value = "페이지크기", required = false)
-            ,@ApiImplicitParam(name = "sort", value = "정렬", required = false)
+            @ApiImplicitParam(name = "page", value = "페이지번호", required = false, example = "0")
+            ,@ApiImplicitParam(name = "size", value = "페이지크기", required = false, example = "0")
+            ,@ApiImplicitParam(name = "sort", value = "정렬", required = false, example = "0")
             ,@ApiImplicitParam(name = "name", value = "이름", required = false)
             ,@ApiImplicitParam(name = "email", value = "이메일", required = false)
             ,@ApiImplicitParam(name = "last", value = "마지막 주문정보만 조회할지 여부", required = false)
