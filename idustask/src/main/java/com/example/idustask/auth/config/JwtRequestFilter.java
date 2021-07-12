@@ -1,7 +1,6 @@
 package com.example.idustask.auth.config;
 
 import com.example.idustask.auth.service.JwtUserDetailsService;
-import com.example.idustask.member.Role;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -67,17 +65,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if(jwtTokenUtil.validateToken(jwtToken)) {
                 //InMemoryTokenStore에 저장된 토큰과 비교
-                 Optional<String> store = Optional.ofNullable(tokenStore.getTokenStore());
+                 Optional<String> store = Optional.ofNullable(tokenStore.getTokenStore(jwtToken));
                 if(!store.isPresent()){
                     httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "UnAuthorized");
 //                    throw new BadCredentialsException("UnAuthorized");
                 }
 
-                Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-                grantedAuthorities.add(new SimpleGrantedAuthority(Role.USER.getValue()));
+                UserDetails userDetails = jwtUserDetailService.getUserDetails(username);
 
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(jwtUserDetailService.getUserDetails().get("userDetails"), null, grantedAuthorities);
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
 
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

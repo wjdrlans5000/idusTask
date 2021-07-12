@@ -37,8 +37,8 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     private ConcurrentHashMap<String,UserDetails> userDetails = new ConcurrentHashMap<>();
 
-    public ConcurrentHashMap<String, UserDetails> getUserDetails() {
-        return userDetails;
+    public UserDetails getUserDetails(String email) {
+        return userDetails.get(email);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (email.equals(this.admin)) {
             grantedAuthorities.add(new SimpleGrantedAuthority(Role.ADMIN.getValue()));
         }
-        this.userDetails.put("userDetails",new UserMember(member, grantedAuthorities));
+        this.userDetails.put(member.getEmail(),new UserMember(member, grantedAuthorities));
 
         return member;
     }
