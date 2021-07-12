@@ -1,0 +1,48 @@
+# 제이슨 문자열을 Object로 변환하는 과정  : deserialization
+# unknown properties가 있으면 실패하라
+spring:
+  jackson:
+  deserialization:
+  fail-on-unknown-properties: true
+
+  datasource:
+    url: jdbc:h2:mem:idus
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+
+  h2:
+    console:
+      enabled: true
+# hibernate를 통하여 테이블을 자동 생성 및 sql logging 관련 설정
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    generate-ddl: true
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+# 실행되는 쿼리 formatting
+        format_sql: true
+    show-sql: true
+
+# 실행되는 쿼리를 출력
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+
+jwt:
+  secret: jwtpassword
+  jwt_token_validity: 36000
+
+permit-url:
+  permitALL_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**]
+exclude-filter:
+  exclude_filter_url_list: [/api/signin, /api/member/signup, /h2-console/**,/v2/api-docs, /swagger-resources/**, /swagger-ui/**, /swagger-ui/index.html**]
+
+admin: admin@email.com
