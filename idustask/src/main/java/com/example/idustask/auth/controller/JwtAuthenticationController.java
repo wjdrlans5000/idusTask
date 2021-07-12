@@ -61,8 +61,10 @@ public class JwtAuthenticationController {
     @PostMapping("/api/logout")
     @ApiOperation(value = "로그아웃" , notes = "로그아웃시 해당 토큰으로 로그인할수 없다. 새로 토큰을 발급받아야한다.")
     public ResponseEntity<?> logout(HttpServletRequest httpServletRequest) throws Exception {
+        final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
+        String jwtToken = requestTokenHeader.substring(7);
         //로그아웃시 InMemoryTokenStore에 토큰을 제거한다.
-        tokenStore.removeAccessToken();
+        tokenStore.removeAccessToken(jwtToken);
 
         EntityModel<LogoutResponse> entityModel = EntityModel.of(new LogoutResponse("Logout Success"));
         entityModel.add(linkTo(methodOn(JwtAuthenticationController.class).logout(null)).withSelfRel());

@@ -12,15 +12,15 @@ public class InMemoryTokenStore {
     private ConcurrentHashMap<String, String> tokenStore = new ConcurrentHashMap<>();
 
     public void setTokenStore(String token) {
-        this.tokenStore.put("token",token);
+        this.tokenStore.put(token,token);
     }
 
-    public void removeAccessToken() {
-        this.tokenStore.remove("token");
+    public void removeAccessToken(String token) {
+        this.tokenStore.remove(token);
     }
 
-    public String getTokenStore() {
-        return this.tokenStore.get("token");
+    public String getTokenStore(String token) {
+        return this.tokenStore.get(token);
     }
 
 }
